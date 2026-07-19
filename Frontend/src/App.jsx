@@ -16,6 +16,12 @@ const initialForm = {
   semester: '',
 }
 
+const apiFetch = (path, options = {}) => {
+  const baseUrl = import.meta.env.VITE_BACKEND_URL?.trim()
+  const target = baseUrl ? `${baseUrl.replace(/\/$/, '')}${path}` : path
+  return fetch(target, options)
+}
+
 function App() {
   const [authMode, setAuthMode] = useState('login')
   const [authForm, setAuthForm] = useState(initialForm)
@@ -50,10 +56,10 @@ function App() {
     const loadFacultyData = async () => {
       try {
         const [studentsRes, attendanceRes] = await Promise.all([
-          fetch('/api/students', {
+          apiFetch('/api/students', {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch('/api/attendance', {
+          apiFetch('/api/attendance', {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ])
@@ -75,7 +81,7 @@ function App() {
 
     const loadStudentAttendance = async (studentId) => {
       try {
-        const res = await fetch(`/api/attendance/${studentId}`, {
+        const res = await apiFetch(`/api/attendance/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         const data = await res.json()
@@ -141,7 +147,7 @@ function App() {
         payload.semester = ''
       }
 
-      const response = await fetch(endpoint, {
+      const response = await apiFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -201,7 +207,7 @@ function App() {
     }
 
     try {
-      const response = await fetch('/api/attendance', {
+      const response = await apiFetch('/api/attendance', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -222,10 +228,10 @@ function App() {
       const loadFacultyData = async () => {
         try {
           const [studentsRes, attendanceRes] = await Promise.all([
-            fetch('/api/students', {
+            apiFetch('/api/students', {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            fetch('/api/attendance', {
+            apiFetch('/api/attendance', {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ])
